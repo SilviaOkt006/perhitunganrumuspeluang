@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulasi Peluang - Mengambil Bola</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ff9966, #ff5e62);
+      color: #fff;
+      padding: 30px;
+    }
+    .card {
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 15px;
+      padding: 25px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      margin-top: 15px;
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 5px;
+    }
+    button {
+      background-color: #ffee58;
+      color: #000;
+      padding: 10px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+    }
+    .feedback {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .correct {
+      color: #00ff00;
+    }
+    .incorrect {
+      color: #ff5252;
+    }
+    .steps, .result {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Simulasi Peluang: Mengambil Bola dari Kotak</h2>
+    <p><strong>Skenario:</strong> Di dalam sebuah kotak terdapat 3 bola merah, 2 bola biru, dan 5 bola kuning. Jika diambil 1 bola secara acak, berapa peluang terambilnya bola merah?</p>
+
+    <label for="jumlahMerah">Jumlah bola merah:</label>
+    <input type="number" id="jumlahMerah" placeholder="Contoh: 3">
+
+    <label for="jumlahTotal">Jumlah total semua bola:</label>
+    <input type="number" id="jumlahTotal" placeholder="Contoh: 10">
+
+    <label for="jawaban">Peluang menurutmu (dalam bentuk pecahan desimal, misal 0.3):</label>
+    <input type="number" step="0.01" id="jawaban" placeholder="Contoh: 0.3">
+
+    <button onclick="cekJawaban()">Cek Jawaban</button>
+
+    <div class="steps" id="steps"></div>
+    <div class="result" id="hasil"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <!-- Suara efek lokal -->
+  <audio id="suaraBenar" src="Benar.mp3" preload="auto"></audio>
+  <audio id="suaraSalah" src="Salah.mp3" preload="auto"></audio>
+
+  <script>
+    function cekJawaban() {
+      const jumlahMerah = parseInt(document.getElementById("jumlahMerah").value);
+      const jumlahTotal = parseInt(document.getElementById("jumlahTotal").value);
+      const jawaban = parseFloat(document.getElementById("jawaban").value);
+
+      const benarAudio = document.getElementById("suaraBenar");
+      const salahAudio = document.getElementById("suaraSalah");
+
+      if (isNaN(jumlahMerah) || isNaN(jumlahTotal) || isNaN(jawaban) || jumlahMerah < 0 || jumlahTotal <= 0) {
+        document.getElementById("hasil").innerHTML = "❗ Masukkan angka yang valid.";
+        return;
+      }
+
+      const peluang = jumlahMerah / jumlahTotal;
+
+      // Langkah-langkah
+      const langkahHTML = `
+        <strong>Langkah-langkah Perhitungan:</strong><br>
+        Peluang = Jumlah bola merah ÷ Jumlah total bola<br>
+        Peluang = ${jumlahMerah} ÷ ${jumlahTotal}<br>
+        Peluang = ${peluang.toFixed(2)}
+      `;
+      document.getElementById("steps").innerHTML = langkahHTML;
+
+      // Hasil akhir
+      document.getElementById("hasil").innerHTML = `✅ Hasil perhitungan: <strong>${peluang.toFixed(2)}</strong> adalah peluang terambil bola merah.`
+
+      // Cek benar atau salah
+      if (Math.abs(jawaban - peluang) < 0.01) {
+        document.getElementById("feedback").innerHTML = `<span class="correct">Jawaban kamu BENAR! 🎉</span>`;
+        benarAudio.currentTime = 0;
+        benarAudio.play().catch(err => console.log("Gagal memutar audio benar:", err));
+      } else {
+        document.getElementById("feedback").innerHTML = `<span class="incorrect">Jawaban kamu SALAH. Coba lagi ya!</span>`;
+        salahAudio.currentTime = 0;
+        salahAudio.play().catch(err => console.log("Gagal memutar audio salah:", err));
+      }
+    }
+  </script>
+
+</body>
+</html>
